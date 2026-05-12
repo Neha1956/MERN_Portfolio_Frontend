@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import TypingAnimation from "../components/TypingAnimation";
 import axiosAPI from "../api/axiosAPI";
 
-const API_BASE_URL = "http://localhost:5000"; // Fallback URL
+const API_BASE_URL = "https://mern-portfolio-uao4.onrender.com"; // Fallback URL
 
 const HeroSection = () => {
   const [profile, setProfile] = useState(null);

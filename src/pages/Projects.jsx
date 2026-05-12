@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import axiosAPI from "../api/axiosAPI";
 
 const Projects = () => {
+
+  const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_URL;
   const [projects, setProjects] = useState([]);
 
   const fetchProjects = async () => {
@@ -79,14 +81,11 @@ const Projects = () => {
                     {/* Image */}
                     <div className="overflow-hidden h-48 relative">
                       <img
-                        src={
-                          project.image
-                            ? `http://localhost:5000/${project.image.replace(
-                                /\\/g,
-                                "/"
-                              )}`
-                            : "https://via.placeholder.com/400x250?text=No+Image"
-                        }
+                       src={
+  project.image
+    ? `${IMAGE_BASE_URL}${project.image.replace(/\\/g, "/")}`
+    : "https://via.placeholder.com/400x250?text=No+Image"
+}
                         alt={project.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       />

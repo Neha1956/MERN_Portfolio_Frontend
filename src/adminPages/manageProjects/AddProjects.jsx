@@ -42,18 +42,16 @@ const AddProjects = () => {
     formData.append("liveLink", form.liveLink);
     formData.append("image", image);
 
-   const token = localStorage.getItem("token");
+    const res = await axiosAPI.post(
+      "/projects/add",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
 
-const res = await axiosAPI.post(
-  "/projects/add",
-  formData,
-  {
-    headers: {
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${token}`,
-    },
-  }
-);
     dispatch(addProject(res.data));
     toast.success("Project added successfully!");
   } catch (error) {
