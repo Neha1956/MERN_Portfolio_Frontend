@@ -8,6 +8,7 @@ import axiosAPI from "../../api/axiosAPI";
 import { toast } from "react-toastify";
 
 const ProjectAction = () => {
+  const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
     const navigate = useNavigate();
     const [toggle, setToggle] = useState(false);
    // console.log("Toggle State:", toggle); // Debugging log
@@ -75,7 +76,7 @@ useEffect(() => {
     className="bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur-md shadow-lg"
   >
     <img
-      src={`http://localhost:5000/${project.image}`}
+      src={`${IMAGE_URL}${project.image.replace(/\\/g, "/")}`}
       alt={project.title}
       className="w-full h-44 object-cover rounded-xl mb-4"
     />
