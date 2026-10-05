@@ -90,8 +90,8 @@ const UpdateProfile = () => {
       toast.success("Profile updated successfully.");
       navigate("/profile-actions");
     } catch (err) {
-      console.log(err);
-      toast.error("Failed to update profile.");
+      console.error("Failed to update profile:", err);
+      toast.error(err.response?.data?.message || "Failed to update profile.");
     } finally {
       setLoading(false);
     }

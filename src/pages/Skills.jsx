@@ -1,33 +1,29 @@
 import { motion } from "framer-motion";
 import { FaReact, FaNode, FaGitAlt, FaDocker } from "react-icons/fa";
-import { SiTypescript, SiMongodb, SiTailwindcss, SiJavascript, SiExpress, SiFirebase } from "react-icons/si";
-//import { useSelector } from "react-redux";
+import { SiMongodb, SiTailwindcss, SiJavascript, SiExpress } from "react-icons/si";
 import axiosAPI from "../api/axiosAPI";
-import { useEffect,useState } from "react";
-//import { setProfile } from "../redux/profileSlice";
-import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { setProfile } from "../redux/profileSlice";
+import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../components/Navbar";
+import normalizeSkills from "../utils/normalizeSkills";
 
 const Skills = () => {
-  //const profile = useSelector((state) => state.profile?.profile);
   const dispatch = useDispatch();
-  const [profile, setProfile] = useState(null);
-
-   // GET PROFILE
-  const getProfile = async () => {
-    try {
-      const res = await axiosAPI.get("/profile/get");
-      dispatch(setProfile(res.data.profile));
-    } catch (error) {
-      console.log("Error fetching profile:", error);
-    }
-  };
+  const profile = useSelector((state) => state.profile.profile);
 
   useEffect(() => {
-    const interval = setInterval(getProfile, 50000); // Refresh every 50 seconds
-    return () => clearInterval(interval); // Cleanup on unmount
+    const getProfile = async () => {
+      try {
+        const res = await axiosAPI.get("/profile/get");
+        dispatch(setProfile(res.data.profile));
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
+
     getProfile();
-  }, []);
+  }, [dispatch]);
 
 
  // const IMAGE_URL = "http://localhost:5000/";
@@ -51,20 +47,10 @@ const Skills = () => {
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white">
       {/* Animated background blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <motion.div
-          animate={{
-            x: [0, 50, 0],
-            y: [0, 50, 0],
-          }}
-          transition={{ duration: 20, repeat: Infinity }}
+        <div
           className="absolute -left-1/2 -top-1/2 w-full h-full bg-gradient-to-r from-cyan-500/20 to-violet-500/20 rounded-full blur-3xl"
         />
-        <motion.div
-          animate={{
-            x: [0, -50, 0],
-            y: [0, -50, 0],
-          }}
-          transition={{ duration: 20, repeat: Infinity, delay: 1 }}
+        <div
           className="absolute -right-1/2 top-1/2 w-full h-full bg-gradient-to-l from-pink-500/20 to-cyan-500/20 rounded-full blur-3xl"
         />
       </div>
@@ -118,15 +104,8 @@ const Skills = () => {
   </h3>
 
   <div className="flex flex-wrap gap-3">
-    {(() => {
-      try {
-        let skills = profile.skills?.join(",");
-
-        while (typeof skills === "string") {
-          skills = JSON.parse(skills);
-        }
-
-        return skills.map((skill, idx) => (
+    {normalizeSkills(profile?.skills).length > 0
+      ? normalizeSkills(profile.skills).map((skill, idx) => (
           <span
             key={idx}
             className="px-4 py-2 rounded-full text-sm font-medium
@@ -138,16 +117,8 @@ const Skills = () => {
           >
             {skill}
           </span>
-        ));
-      } catch (error) {
-        console.log(error);
-        return (
-          <span className="text-slate-400 text-sm">
-            Skills not available
-          </span>
-        );
-      }
-    })()}
+        ))
+      : <span className="text-slate-400 text-sm">Skills not available</span>}
   </div>
 </div>            
               

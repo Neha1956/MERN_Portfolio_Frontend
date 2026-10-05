@@ -3,40 +3,32 @@ import { FiGithub, FiExternalLink } from "react-icons/fi";
 import Navbar from "../components/Navbar";
 import { useEffect, useState } from "react";
 import axiosAPI from "../api/axiosAPI";
+import assetUrl from "../utils/assetUrl";
 
 const Projects = () => {
-
-  const IMAGE_BASE_URL = import.meta.env.VITE_IMAGE_URL;
   const [projects, setProjects] = useState([]);
 
-  const fetchProjects = async () => {
-    try {
-      const res = await axiosAPI.get("/projects/get");
-      //console.log("Projects Data:", res.data.projects);
-      setProjects(res.data.projects || []);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
-    fetchProjects();
-    const interval = setInterval(fetchProjects, 50000); // Refresh every 30 seconds
-    return () => clearInterval(interval); // Cleanup on unmount
+    const loadProjects = async () => {
+      try {
+        const res = await axiosAPI.get("/projects/get");
+        setProjects(res.data.projects || []);
+      } catch (error) {
+        console.error("Failed to load projects:", error);
+      }
+    };
+
+    loadProjects();
   }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white">
       {/* Animated background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <motion.div
-          animate={{ x: [0, 50, 0], y: [0, 50, 0] }}
-          transition={{ duration: 20, repeat: Infinity }}
+        <div
           className="absolute -left-1/2 -top-1/2 w-full h-full bg-gradient-to-r from-cyan-500/20 to-violet-500/20 rounded-full blur-3xl"
         />
-        <motion.div
-          animate={{ x: [0, -50, 0], y: [0, -50, 0] }}
-          transition={{ duration: 20, repeat: Infinity, delay: 1 }}
+        <div
           className="absolute -right-1/2 top-1/2 w-full h-full bg-gradient-to-l from-pink-500/20 to-cyan-500/20 rounded-full blur-3xl"
         />
       </div>
@@ -81,12 +73,12 @@ const Projects = () => {
                     {/* Image */}
                     <div className="overflow-hidden h-48 relative">
                       <img
-                       src={
-  project.image
-    ? `${IMAGE_BASE_URL}${project.image.replace(/\\/g, "/")}`
-    : "https://via.placeholder.com/400x250?text=No+Image"
-}
-                        alt={project.title}
+                       src={project.image
+                         ? assetUrl(project.image)
+                         : "https://via.placeholder.com/400x250?text=No+Image"}
+                       alt={project.title}
+                       loading="lazy"
+                       decoding="async"
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-950 to-transparent opacity-60" />

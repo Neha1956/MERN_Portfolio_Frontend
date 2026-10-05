@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   FiEdit,
-  
-  FiUser,
   FiLinkedin,
   FiArrowLeft,
   FiPlus,
@@ -13,6 +11,8 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import axiosAPI from "../../api/axiosAPI";
 import { setProfile,} from "../../redux/profileSlice";
+import assetUrl from "../../utils/assetUrl";
+import normalizeSkills from "../../utils/normalizeSkills";
 
 const ProfileActions = () => {
   const user = useSelector((state) => state.auth.user);
@@ -21,22 +21,18 @@ const ProfileActions = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const IMAGE_URL = import.meta.env.VITE_IMAGE_URL;
-
-  // GET PROFILE
-  const getProfile = async () => {
-    try {
-      const res = await axiosAPI.get("/profile/get");
-      dispatch(setProfile(res.data.profile));
-    } catch (error) {
-      console.log("Error fetching profile:", error);
-    }
-  };
-
   useEffect(() => {
-    getProfile();
-  }, []);
+    const getProfile = async () => {
+      try {
+        const res = await axiosAPI.get("/profile/get");
+        dispatch(setProfile(res.data.profile));
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
 
+    getProfile();
+  }, [dispatch]);
   
  
 
@@ -73,7 +69,7 @@ const ProfileActions = () => {
         <div className="flex flex-col items-center text-center">
           {profile.profileImage && (
             <img
-              src={`${IMAGE_URL}${profile.profileImage}`}
+              src={assetUrl(profile.profileImage)}
               alt="profile"
               className="w-24 h-24 rounded-full object-cover border-2 border-cyan-400"
             />
@@ -105,10 +101,7 @@ const ProfileActions = () => {
           <div className="bg-slate-900/50 p-4 rounded-xl">
             <p className="text-sm text-slate-400 mb-2">Skills</p>
            <div className="flex flex-wrap gap-2">
-  {(profile.skills
-    ? JSON.parse(profile.skills.join(","))
-    : []
-  ).map((skill, idx) => (
+  {normalizeSkills(profile.skills).map((skill, idx) => (
     <span
       key={idx}
       className="px-3 py-1 bg-cyan-500/20 text-cyan-300 rounded-full text-sm"
@@ -138,7 +131,7 @@ const ProfileActions = () => {
 
             {profile.resume ? (
               <a
-                href={`${IMAGE_URL}${profile.resume}`}
+                href={assetUrl(profile.resume)}
                 target="_blank"
                 className="text-cyan-400 underline"
               >

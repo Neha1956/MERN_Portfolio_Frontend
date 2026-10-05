@@ -20,6 +20,7 @@ const AddProjects = () => {
     
   });
   const [image, setImage] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleImageChange = (e) => {
   setImage(e.target.files[0]);
@@ -30,39 +31,42 @@ const AddProjects = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
+    setSubmitting(true);
 
-  try {
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    formData.append("title", form.title);
-    formData.append("description", form.description);
-    formData.append("techStack", form.techStack);
-    formData.append("githubLink", form.githubLink);
-    formData.append("liveLink", form.liveLink);
-    formData.append("image", image);
-
-    const res = await axiosAPI.post(
-      "/projects/add",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      formData.append("title", form.title);
+      formData.append("description", form.description);
+      formData.append("techStack", form.techStack);
+      formData.append("githubLink", form.githubLink);
+      formData.append("liveLink", form.liveLink);
+      if (image) {
+        formData.append("image", image);
       }
-    );
 
-    dispatch(addProject(res.data));
-    toast.success("Project added successfully!");
-  } catch (error) {
-    console.log(error);
-    toast.error("Failed to add project");
-  }
+      const res = await axiosAPI.post(
+        "/projects/add",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
 
-    console.log("Project Data:", form);
-    //toast.success("Project added successfully!");
-    setForm({ title: "", description: "", techStack: "", githubLink: "", liveLink: "" });
-    setImage(null);
+      dispatch(addProject(res.data.project));
+      toast.success("Project added successfully!");
+      setForm({ title: "", description: "", techStack: "", githubLink: "", liveLink: "" });
+      setImage(null);
+    } catch (error) {
+      console.error("Failed to add project:", error);
+      toast.error(error.response?.data?.message || "Failed to add project");
+    } finally {
+      setSubmitting(false);
+    }
+
   };
 
   return (
@@ -188,10 +192,11 @@ const AddProjects = () => {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             type="submit"
+            disabled={submitting}
             
-            className="w-full py-3 bg-gradient-to-r from-cyan-500 to-violet-500 rounded-xl font-semibold text-lg shadow-lg"
+            className="w-full py-3 bg-gradient-to-r from-cyan-500 to-violet-500 rounded-xl font-semibold text-lg shadow-lg disabled:opacity-60"
           >
-            Add Project
+            {submitting ? "Adding..." : "Add Project"}
           </motion.button>
         </form>
       </motion.div>

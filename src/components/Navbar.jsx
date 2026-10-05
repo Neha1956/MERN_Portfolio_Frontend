@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { FiMenu, FiX,FiRefreshCw } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { pathname } = useLocation();
 
   const navLinks = [
     { name: "Home", href: "/home" },
@@ -23,14 +24,18 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-violet-500 bg-clip-text text-transparent"
-          >
-            Portfolio
-          </motion.div>
+        <motion.div
+  initial={{ opacity: 0, x: -20, scale: 0.95 }}
+  animate={{ opacity: 1, x: 0, scale: 1 }}
+  transition={{ duration: 0.6, ease: "easeOut" }}
+  className="text-4xl italic font-bold bg-gradient-to-r from-cyan-200 via-sky-400 to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(56,189,248,0.4)]"
+  style={{
+    fontFamily: '"Edwardian Script ITC", "Segoe Script", "Brush Script MT", cursive',
+    letterSpacing: "1px",
+  }}
+>
+  Neha
+</motion.div>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex gap-8">
@@ -41,12 +46,18 @@ const Navbar = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <Link
+                <NavLink
                   to={link.href}
-                  className="text-slate-300 hover:text-cyan-400 transition-colors duration-300 font-medium"
+                  className={({ isActive }) =>
+                    `transition-colors duration-300 font-medium ${
+                      isActive || (link.href === "/home" && pathname === "/")
+                        ? "text-cyan-400"
+                        : "text-slate-300 hover:text-cyan-400"
+                    }`
+                  }
                 >
                   {link.name}
-                </Link>
+                </NavLink>
               </motion.div>
             ))}
              <motion.button
@@ -84,13 +95,19 @@ const Navbar = () => {
                 key={link.name}
                 whileHover={{ x: 10 }}
               >
-                <Link
+                <NavLink
                   to={link.href}
                   onClick={() => setIsOpen(false)}
-                  className="text-slate-300 hover:text-cyan-400 transition-colors duration-300 font-medium py-2 block"
+                  className={({ isActive }) =>
+                    `transition-colors duration-300 font-medium py-2 block ${
+                      isActive || (link.href === "/home" && pathname === "/")
+                        ? "text-cyan-400"
+                        : "text-slate-300 hover:text-cyan-400"
+                    }`
+                  }
                 >
                   {link.name}
-                </Link>
+                </NavLink>
                
               </motion.div>
             ))}

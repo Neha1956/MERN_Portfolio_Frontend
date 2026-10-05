@@ -22,28 +22,33 @@ const UpdateProject = () => {
 };
 
   useEffect(() => {
-    fetchProject();
-  }, []);
+    let isCurrent = true;
 
-  const fetchProject = async () => {
-    try {
-      const res = await axiosAPI.get("/projects/get");
-      const project = res.data.projects.find((p) => p._id === id);
+    const fetchProject = async () => {
+      try {
+        const res = await axiosAPI.get("/projects/get");
+        const project = res.data.projects.find((item) => item._id === id);
 
-      if (project) {
-        setForm({
-          title: project.title || "",
-          description: project.description || "",
-          techStack: project.techStack?.join(",") || "",
-          githubLink: project.githubLink || "",
-          liveLink: project.liveLink || "",
-        });
+        if (project && isCurrent) {
+          setForm({
+            title: project.title || "",
+            description: project.description || "",
+            techStack: project.techStack?.join(",") || "",
+            githubLink: project.githubLink || "",
+            liveLink: project.liveLink || "",
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch project:", error);
+        toast.error("Failed to fetch project");
       }
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to fetch project");
-    }
-  };
+    };
+
+    fetchProject();
+    return () => {
+      isCurrent = false;
+    };
+  }, [id]);
 
   const handleChange = (e) => {
     setForm({
@@ -77,8 +82,8 @@ const UpdateProject = () => {
     toast.success("Project updated successfully");
     navigate("/project-actions");
   } catch (error) {
-    console.log(error);
-    toast.error("Update failed");
+    console.error("Failed to update project:", error);
+    toast.error(error.response?.data?.message || "Update failed");
   }
 };
   return (

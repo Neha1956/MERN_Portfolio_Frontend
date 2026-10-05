@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FiMail, FiPhone, FiMapPin, FiSend, FiGithub, FiLinkedin, FiTwitter } from "react-icons/fi";
+import { FiMail, FiMapPin, FiSend, FiGithub, FiLinkedin } from "react-icons/fi";
 import Navbar from "../components/Navbar";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,8 +11,7 @@ import { useEffect } from "react";
 const Contact = () => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.message);
-const [profile, setProfile] = useState(null);
-  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [profile, setProfile] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -20,22 +19,17 @@ const [profile, setProfile] = useState(null);
   });
 //console.log("Profile data in Contact page:", profile);
 
-  const fetchProfile = async () => {
+  useEffect(() => {
+    const fetchProfile = async () => {
       try {
         const res = await axiosAPI.get("/profile/get");
-        setProfile(res.data.profile.socialLinks || null);
+        setProfile(res.data.profile?.socialLinks || null);
       } catch (error) {
         console.error("Failed to fetch profile:", error);
-      } finally {
-        setLoadingProfile(false);
       }
     };
 
-     useEffect(() => {
-
     fetchProfile();
-    const interval = setInterval(fetchProfile, 50000); // Refresh every 50 seconds
-    return () => clearInterval(interval); // Cleanup on unmount
   }, []);
 
   const contactInfo = [
@@ -101,7 +95,7 @@ const [profile, setProfile] = useState(null);
       } else {
         toast.error(result.payload || "Failed to send message");
       }
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong");
     }
   };
@@ -110,20 +104,10 @@ const [profile, setProfile] = useState(null);
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white">
       {/* Animated background blobs */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <motion.div
-          animate={{
-            x: [0, 50, 0],
-            y: [0, 50, 0],
-          }}
-          transition={{ duration: 20, repeat: Infinity }}
+        <div
           className="absolute -left-1/2 -top-1/2 w-full h-full bg-gradient-to-r from-cyan-500/20 to-violet-500/20 rounded-full blur-3xl"
         />
-        <motion.div
-          animate={{
-            x: [0, -50, 0],
-            y: [0, -50, 0],
-          }}
-          transition={{ duration: 20, repeat: Infinity, delay: 1 }}
+        <div
           className="absolute -right-1/2 top-1/2 w-full h-full bg-gradient-to-l from-pink-500/20 to-cyan-500/20 rounded-full blur-3xl"
         />
       </div>

@@ -15,11 +15,10 @@ const AdminRoute = ({ children }) => {
   const user = useSelector((state) => state.auth.user);
 
   if (!user || user.role !== "admin") {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/admin/login" replace />;
   }
 
   return children;
 };
 
 export { AdminRoute, ProtectedRoute };
-

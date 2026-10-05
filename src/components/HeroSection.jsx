@@ -4,30 +4,21 @@ import { FiDownload, FiArrowRight, FiGithub, FiLinkedin, FiMail } from "react-ic
 import { Link } from "react-router-dom";
 import TypingAnimation from "../components/TypingAnimation";
 import axiosAPI from "../api/axiosAPI";
-
-const API_BASE_URL = "https://mern-portfolio-uao4.onrender.com"; // Fallback URL
+import assetUrl from "../utils/assetUrl";
 
 const HeroSection = () => {
   const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
-
- 
+  useEffect(() => {
     const fetchProfile = async () => {
       try {
         const res = await axiosAPI.get("/profile/get");
         setProfile(res.data.profile || null);
       } catch (error) {
         console.error("Failed to fetch profile:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
-     useEffect(() => {
-
     fetchProfile();
-    const interval = setInterval(fetchProfile, 50000); // Refresh every 50 seconds
-    return () => clearInterval(interval); // Cleanup on unmount
   }, []);
 
   const displayProfile = profile || {
@@ -47,15 +38,13 @@ const HeroSection = () => {
 
    
 
-  const profileImage = displayProfile.profileImage
-  ? `${API_BASE_URL}/${displayProfile.profileImage.replace(/\\/g, "/")}`
-  : "";
+  const profileImage = assetUrl(displayProfile.profileImage);
 
    // console.log("Profile Image URL:", profileImage);
 
   const resumeDownload = () => {
     const resumeUrl = displayProfile.resume
-      ? `${API_BASE_URL}/${displayProfile.resume}`
+      ? assetUrl(displayProfile.resume)
       : "/resume.pdf";
 
     const link = document.createElement("a");
@@ -109,7 +98,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-20">
+    <section id="home" className="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-20">
       <motion.div
         variants={containerVariants}
         initial="hidden"
